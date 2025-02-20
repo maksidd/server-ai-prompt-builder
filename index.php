@@ -15,8 +15,13 @@ $blockCategoryController = new BlockCategoryController();
 $templateController = new TemplateController();
 $blockController = new BlockController();
 
-switch ($requestUri) {
-    case '/api/block-categories':
+// Разделяем URL на части для обработки динамических маршрутов (например, /api/blocks/1)
+$uriParts = explode('/', $requestUri);
+$resource = $uriParts[2] ?? ''; // Например, 'blocks', 'templates'
+$id = $uriParts[3] ?? null; // ID ресурса, например, 1, 2, 3
+
+switch ($resource) {
+    case 'block-categories':
         if ($requestMethod === 'GET') {
             $blockCategoryController->getBlockCategories();
         } elseif ($requestMethod === 'POST') {
@@ -24,19 +29,25 @@ switch ($requestUri) {
         }
         break;
 
-    case '/api/templates':
+    case 'templates':
         if ($requestMethod === 'GET') {
             $templateController->getTemplates();
         } elseif ($requestMethod === 'POST') {
             $templateController->createTemplate();
+        } elseif ($requestMethod === 'DELETE' && $id) {
+            $templateController->deleteTemplate($id);
         }
         break;
 
-    case '/api/blocks':
+    case 'blocks':
         if ($requestMethod === 'GET') {
             $blockController->getBlocks();
         } elseif ($requestMethod === 'POST') {
             $blockController->createBlock();
+        } elseif ($requestMethod === 'PATCH' && $id) {
+            $blockController->updateBlock($id);
+        } elseif ($requestMethod === 'DELETE' && $id) {
+            $blockController->deleteBlock($id);
         }
         break;
 
