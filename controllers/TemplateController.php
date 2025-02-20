@@ -20,16 +20,6 @@ class TemplateController
         echo json_encode($templates);
     }
 
-    public function getTemplate($id)
-    {
-        $template = $this->templateModel->getTemplate($id);
-        if (!$template) {
-            http_response_code(404);
-            echo json_encode(['error' => 'Template not found']);
-            return;
-        }
-        echo json_encode($template);
-    }
 
     public function createTemplate()
     {
@@ -45,13 +35,6 @@ class TemplateController
         // Создание шаблона
         $id = $this->templateModel->createTemplate($data);
         echo json_encode(['id' => $id, 'title' => $data['title']]);
-    }
-
-    public function updateTemplate($id)
-    {
-        $data = json_decode(file_get_contents('php://input'), true);
-        $result = $this->templateModel->updateTemplate($id, $data);
-        echo json_encode(['updated' => $result]);
     }
 
     public function deleteTemplate($id)
