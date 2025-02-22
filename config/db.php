@@ -1,5 +1,6 @@
 <?php
 // config/db.php
+echo "test";
 
 
 $host = 'crossover.proxy.rlwy.net'; // Хост из Railway (через прокси)
