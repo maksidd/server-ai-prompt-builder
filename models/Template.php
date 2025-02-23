@@ -13,12 +13,18 @@ class Template
     public function getTemplates()
     {
         $stmt = $this->pdo->query("SELECT * FROM templates");
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $templates = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($templates as &$template) {
+            if (isset($template['tags'])) {
+                $template['tags'] = json_decode($template['tags'], true);
+            }
+        }
+        return $templates;
     }
 
     public function createTemplate($data)
     {
-        $stmt = $this->pdo->prepare("INSERT INTO templates (title, description, content, tags, rating) VALUES (:title, :description, :content, :tags, :rating)");
+        $stmt = $this->pdo->prepare("INSERT INTO templates (title, description, content, tags, rating) VALUES (:title, :description, :content, :tags::jsonb, :rating)");
         $stmt->execute([
             'title' => $data['title'],
             'description' => $data['description'],
