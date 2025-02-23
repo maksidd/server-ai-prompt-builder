@@ -1,11 +1,11 @@
 <?php
 // config/db.php
 
-$host = 'crossover.proxy.rlwy.net';
-$port = '45546';                     
-$dbname = 'railway';                 
-$user = 'postgres';                  
-$password = 'ggiacPLtVMbXVGDDOglcDbQnBetsLZZX';
+$host = 'localhost';
+$port = 'port';
+$dbname = 'your_database_name';
+$user = 'your_database_user';
+$password = 'your_database_password';
 
 try {
     $dsn = "pgsql:host=$host;port=$port;dbname=$dbname;sslmode=require";
