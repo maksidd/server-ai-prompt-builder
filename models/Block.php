@@ -13,12 +13,18 @@ class Block
     public function getBlocks()
     {
         $stmt = $this->pdo->query("SELECT * FROM blocks");
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $blocks = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($blocks as &$block) {
+            if (isset($block['tags'])) {
+                $block['tags'] = json_decode($block['tags'], true);
+            }
+        }
+        return $blocks;
     }
 
     public function createBlock($data)
     {
-        $stmt = $this->pdo->prepare("INSERT INTO blocks (content, category, tags) VALUES (:content, :category, :tags)");
+        $stmt = $this->pdo->prepare("INSERT INTO blocks (content, category, tags) VALUES (:content, :category, :tags::jsonb)");
         $stmt->execute([
             'content' => $data['content'],
             'category' => $data['category'],
@@ -29,14 +35,17 @@ class Block
 
     public function updateBlock($id, $data)
     {
-        $fields = [];
-        foreach ($data as $key => $value) {
-            $fields[] = "$key = :$key";
-        }
-        $query = "UPDATE blocks SET " . implode(', ', $fields) . " WHERE id = :id";
-        $stmt = $this->pdo->prepare($query);
-        $data['id'] = $id;
-        $stmt->execute($data);
+        $stmt = $this->pdo->prepare("
+            UPDATE blocks 
+            SET content = :content, category = :category, tags = :tags::jsonb 
+            WHERE id = :id
+        ");
+        $stmt->execute([
+            'content' => $data['content'],
+            'category' => $data['category'],
+            'tags' => json_encode($data['tags']), // преобразуем массив в JSON
+            'id' => $id
+        ]);
         return $stmt->rowCount();
     }
 
